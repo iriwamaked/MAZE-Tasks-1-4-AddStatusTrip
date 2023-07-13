@@ -25,6 +25,8 @@ namespace Maze
 
         public int smileEnergy { get; set; }
         public int smileStep { get; set; }
+
+         public DateTime startGame { get; set; }
         public Labirint(Form parent, int width, int height)
         {
             this.width = width;
@@ -82,7 +84,7 @@ namespace Maze
                     }
 
                     // стены по периметру обязательны
-                    if (y == 0 || x == 0 || y == height - 1 | x == width - 1)
+                    if (y == 0 || x == 0 || y == height - 1 || x == width - 1 /*|| y == height - 2*/)
                     {
                         current = MazeObject.MazeObjectType.WALL;
                     }

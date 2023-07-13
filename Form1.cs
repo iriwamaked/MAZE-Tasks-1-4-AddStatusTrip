@@ -33,7 +33,7 @@ namespace Maze
             //Height = rows * 16 + 40;
 
             //Размеры клиетской области (т.е. того участка, на котором размещаются элементы управления)
-            ClientSize = new Size(columns*pictureSize, rows*pictureSize);
+            ClientSize = new Size(columns*pictureSize/*+toolStripStatusLabel1.Width*/, rows*pictureSize + toolStripStatusLabel1.Height);
 
             //свойство, которое позволяет размещать окно четко по центру рабочего стола
             StartPosition = FormStartPosition.CenterScreen;
@@ -45,7 +45,11 @@ namespace Maze
             //которому сообщается кто форма (родитель для всех дочерних элементов)
             //какого размера лабиринт в ячейках по ширине и высоте
             l.Show();
+            l.startGame = DateTime.Now;
+            timer1.Start();
             SetTitle();
+            SetStatusTrip();
+           
         }
 
         private void SetTitle()
@@ -53,11 +57,33 @@ namespace Maze
             Text = $"Колобок(**) Медали: {l.medalCount} Здоровье: {l.smileHealth} Энергия: {l.smileEnergy}" ;
         }
 
+        private void SetStatusTrip()
+        {
+            l.startGame=DateTime.Now;
+            toolStripStatusLabel1.Text = $"Здоровье: {l.smileHealth}";
+            toolStripStatusLabel2.Text = $"Количество шагов: {l.smileStep}";
+            toolStripStatusLabel3.Text = "Игровое время:" + l.startGame.ToString(@"hh\:mm\:ss");
+        }
+
         private void ChangeTitle()
         {
             Text = $"Колобок(**) Медали: {l.medalCount} Здоровье: {l.smileHealth} Энергия: {l.smileEnergy}";
         }
 
+        private void ChangeStatusTrip()
+        {
+            toolStripStatusLabel1.Text = $"Здоровье: {l.smileHealth} ";
+            toolStripStatusLabel2.Text = $"Количество шагов: {l.smileStep}";
+            //toolStripStatusLabel3.Text=(DateTime.Now-l.startGame).ToString(@"hh\:mm:\ss");
+            //TimeSpan gameTime = DateTime.Now - l.startGame;
+            //toolStripStatusLabel3.Text = "Игровое время:" + gameTime.ToString(@"hh\:mm\:ss");
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            TimeSpan gameTime = DateTime.Now - l.startGame;
+            toolStripStatusLabel3.Text = "Игровое время:" + gameTime.ToString(@"hh\:mm\:ss");
+        }
         private void CheckAllMedalCollect(int medalCount)
         {
             if (medalCount == 0) 
@@ -127,6 +153,7 @@ namespace Maze
                 l.smileStep++;
                 l.smileEnergy--;
                 ChangeTitle();
+                ChangeStatusTrip();
                 CheckEnergy();
                 //проверка, свододна ли ячейка справа
                 if (l.maze[l.smileY, l.smileX+1].type == 
@@ -148,6 +175,7 @@ namespace Maze
                     SmileXPlus();
                     l.smileHealth-=health.Next(20,25);
                     ChangeTitle();
+                    ChangeStatusTrip();
                     CheckHealth();
                 }
                 else if (l.maze[l.smileY, l.smileX + 1].type == MazeObject.MazeObjectType.HEART)
@@ -157,6 +185,7 @@ namespace Maze
                         SmileXPlus();
                         l.smileHealth += 5;
                         ChangeTitle();
+                        ChangeStatusTrip();
                         CheckHealth();
                     }
                 }
@@ -176,6 +205,7 @@ namespace Maze
                 l.smileStep++;
                 l.smileEnergy--;
                 ChangeTitle();
+                ChangeStatusTrip();
                 if (l.maze[l.smileY, l.smileX - 1].type ==
                     MazeObject.MazeObjectType.HALL) //проверяем является ли ячейка левее коридором
                 {
@@ -193,6 +223,7 @@ namespace Maze
                     SmileXMinus();
                     l.smileHealth -= health.Next(20, 25);
                     ChangeTitle();
+                    ChangeStatusTrip();
                     CheckHealth();
                 }
                 else if (l.maze[l.smileY, l.smileX - 1].type == MazeObject.MazeObjectType.HEART)
@@ -202,6 +233,7 @@ namespace Maze
                         SmileXMinus();
                         l.smileHealth += 5;
                         ChangeTitle();
+                        ChangeStatusTrip();
                         CheckHealth();
                     }
                 }
@@ -221,6 +253,7 @@ namespace Maze
                 l.smileStep++;
                 l.smileEnergy--;
                 ChangeTitle();
+                ChangeStatusTrip();
                 if (l.maze[l.smileY-1, l.smileX ].type ==
                     MazeObject.MazeObjectType.HALL) //проверяем является ли ячейка выше на одну позицию, коридором
                 {
@@ -239,6 +272,7 @@ namespace Maze
                     SmileYMinus();
                     l.smileHealth -= health.Next(20, 25);
                     ChangeTitle();
+                    ChangeStatusTrip();
                     CheckHealth();
                 }
                 else if (l.maze[l.smileY - 1, l.smileX].type == MazeObject.MazeObjectType.HEART)
@@ -248,6 +282,7 @@ namespace Maze
                         SmileYMinus();
                         l.smileHealth += 5;
                         ChangeTitle();
+                        ChangeStatusTrip();
                         CheckHealth();
                     }
                 }
@@ -266,6 +301,7 @@ namespace Maze
                 l.smileStep++;
                 l.smileEnergy--;
                 ChangeTitle();
+                ChangeStatusTrip();
                 if (l.maze[l.smileY +1, l.smileX].type ==
                     MazeObject.MazeObjectType.HALL) //проверяем является ли ячейка выше на одну позицию, коридором
                 {
@@ -284,6 +320,7 @@ namespace Maze
                     SmileYPlus();
                     l.smileHealth -= health.Next(20, 25);
                     ChangeTitle();
+                    ChangeStatusTrip();
                     CheckHealth();
                 }
                 else if (l.maze[l.smileY + 1, l.smileX].type == MazeObject.MazeObjectType.HEART)
@@ -293,6 +330,7 @@ namespace Maze
                         SmileYPlus();
                         l.smileHealth += 5;
                         ChangeTitle();
+                        ChangeStatusTrip();
                         CheckHealth();
                     }
                 }
@@ -307,5 +345,6 @@ namespace Maze
                 }
             }
         }
+
     }
 }
